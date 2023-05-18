@@ -71,4 +71,8 @@ sudo rm -rf /home/jetpack;
 sudo rm -f /etc/skel/Desktop/install-jetpack.desktop;
 sudo rm -f /home/${USER}/Desktop/install-jetpack.desktop;
 
+sudo apt full-upgrade --yes --assume-yes;
+
+sudo reboot;
+
 exit 0;
