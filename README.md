@@ -33,7 +33,7 @@ up to Gen3 PCIe.
 
 ```bash
 cd ~
-git clone https://github.com/pawangonnakuti/Jetson-Flash-Manager
+git clone https://github.com/cranky-cyborg/Jetson-Flash-Manager
 
 ```
 ### Create director ~/jetson-files and save all necessary files
