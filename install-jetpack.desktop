@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
 Name=Install Jetpack
-Exec=sudo /home/jetpack/install-jetpack.sh
+Exec=/home/jetpack/install-jetpack.sh
 Terminal=true
 Icon=gnome-terminal
