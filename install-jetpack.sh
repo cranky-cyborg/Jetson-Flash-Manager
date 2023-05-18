@@ -61,7 +61,7 @@ sudo apt install --reinstall --yes --assume-yes \
   nvidia-l4t-nvpmodel-gui-tools nvidia-l4t-nvpmodel nvidia-l4t-nvsci nvidia-l4t-oem-config nvidia-l4t-openwfd \
   nvidia-l4t-optee nvidia-l4t-pva nvidia-l4t-tools nvidia-l4t-vulkan-sc-dev nvidia-l4t-vulkan-sc-samples \
   nvidia-l4t-vulkan-sc-sdk nvidia-l4t-vulkan-sc nvidia-l4t-wayland nvidia-l4t-weston nvidia-l4t-x11 \
-  nvidia-l4t-xusb-firmware;
+  nvidia-l4t-xusb-firmware nvidia-jetpack;
 
 if [ -f /home/jetpack/deepstream-6.2_6.2.0-1_arm64.deb ]; then
  sudo apt-get install /home/jetpack/deepstream-6.2_6.2.0-1_arm64.deb;

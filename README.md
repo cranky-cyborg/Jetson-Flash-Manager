@@ -52,7 +52,7 @@ The script will ask you for a `sudo` password.
 
 ```bash
 cd ~/Jetson-Flash-Manager
-./jondk-flash.sh
+./flashmgr.sh
 
 ```
 As the script runs, it first installs the package `pv` that is used throughout to measure progress.
