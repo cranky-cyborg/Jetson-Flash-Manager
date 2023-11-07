@@ -14,7 +14,7 @@ conf=$(zenity --forms --title="NVIDIA Jetson Orin Nano - Boot from NVMe"\
  --text="NVIDIA Jetson Orin Nano - Configuration" --separator=","\
  --add-combo="Do you want the script to download SD-card image :" --combo-values="Yes|No"\
  --add-combo="Select what drive you want to flash: " --combo-values="/dev/mmcblk1|/dev/nvme0n1"\
- --add-combo="Do you want to install DeepStream 6.2 :" --combo-values="Yes|No"\
+ --add-combo="Do you want to install DeepStream 6.3 :" --combo-values="Yes|No"\
  --add-combo="Do you wish to install NVIDIA-JetPack (latest) :" --combo-values="Yes|No"\
  --add-combo="Do you wish to increase ZRAM from 2Gb to 14GB :" --combo-values="Yes|No"\
  --add-combo="Do you wish to remove sudo from asking passwd :" --combo-values="Yes|No"\
@@ -50,21 +50,21 @@ Selecting these requires you to manually download and place it in Folder '~/jets
 <b>SD card image:</b> Download the SD-card image from URL (provided below), and place it in folder '~/jetson-files'.
 If you have already extracted the zip, please the <b><i>sd-blob.img</i></b> file in the folder '~/jetson-files'.
 
-<b><i>https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v3.1/sd_card_b49/jp511-orin-nano-sd-card-image.zip</i></b>
+<b><i>https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v4.1/jp512-orin-nano-sd-card-image.zip</i></b>
 
 <b>DeepStream SDK 6.2</b> Down the DeepStream SDK from URL provided below, and place it in Folder '~/jetson-files'.
 You will need NVIDIA login to download deepstream sdk.
 
-<b><i>https://developer.nvidia.com/downloads/deepstream-62-620-1-arm64-deb</i></b>
+<b><i>https://api.ngc.nvidia.com/v2/resources/org/nvidia/deepstream/6.3/files?redirect=true&amp;path=deepstream-6.3_6.3.0-1_arm64.deb</i></b>
 
 <b> Only hit OK button, once you have placed these files in Folder '~/jetson-files' </b>
 " --ellipsize;
 fi
 
 if [ $deepstream = "Yes" ]; then
-  if [ ! -f ~/jetson-files/deepstream-6.2_6.2.0-1_arm64.deb ]; then
+  if [ ! -f ~/jetson-files/deepstream-6.3_6.3.0-1_arm64.deb ]; then
     zenity --error --title="Deepstream 6.2 (deb) installer file doesn't exists" \
-    --text="Deepstream 6.2 installer file doesn't exists in folder '~/jetson-files'.
+    --text="Deepstream 6.3 installer file doesn't exists in folder '~/jetson-files'.
    
 Please ensure you have the file copied, or the set DeepStream install option to 'No'. " --ellipsize;
     exit 0
@@ -76,39 +76,42 @@ if [ ! -d ~/jetson-files ]; then
 fi
 
 if [[ $sdimg = "Yes" ]]; then
-  wget --quiet --show-progress https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v3.1/sd_card_b49/jp511-orin-nano-sd-card-image.zip 2>&1 | while IFS= read -r line; do echo $(awk -F'%' '{print $1}' <<<$(awk '{print $7}' <<<$line)); done | zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Downloading from developer.nvidia.com" --title="Jetson Orin Nano Developer Kit SD Card image";
+  wget --quiet --show-progress https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v4.1/jp512-orin-nano-sd-card-image.zip 2>&1 | while IFS= read -r line; do echo $(awk -F'%' '{print $1}' <<<$(awk '{print $7}' <<<$line)); done | zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Downloading from developer.nvidia.com" --title="Jetson Orin Nano Developer Kit SD Card image";
 
-  mv ./jp511-orin-nano-sd-card-image.zip ~/jetson-files
+  mv ./jp512-orin-nano-sd-card-image.zip ~/jetson-files
 
-  unzip -p ~/jetson-files/jp511-orin-nano-sd-card-image.zip | pv -n -s 21g > ~/jetson-files/sd-blob.img 2> >(zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Extracting sd-card image from .zip file " --title="Jetson Orin Nano Developer Kit SD Card image (Unzipping)");
+  unzip -p ~/jetson-files/jp512-orin-nano-sd-card-image.zip  | pv -n -s 21g > ~/jetson-files/sd-blob.img 2> >(zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Extracting sd-card image from .zip file " --title="Jetson Orin Nano Developer Kit SD Card image (Unzipping)");
 
 else
-  #50d923dd37b30d7d8d7c208cca6658ea  jp511-orin-nano-sd-card-image.zip
-  #6ae64df9bb3f3703c4ba5f3556f1caaa  sd-blob.img
-  if [ -f ~/jetson-files/sd-blob.img  ]; then #50d923dd37b30d7d8d7c208cca6658ea
+  #c00623b88952ebf49a19007a95eec90c  jp512-orin-nano-sd-card-image.zip
+  #c2fb40895ad851befa1a9c1ce50792a1  sd-blob.img
+
+  #Check if zip file has case issue
+  #todo
+  if [ -f ~/jetson-files/sd-blob.img  ]; then
     echo "Validating file sd-blob.img, this will take some time";
     md5sd=$(awk '{print $1}' <<< $(md5sum ~/jetson-files/sd-blob.img));
-    if [ $md5sd = "6ae64df9bb3f3703c4ba5f3556f1caaa" ]; then
+    if [ $md5sd = "c2fb40895ad851befa1a9c1ce50792a1" ]; then
       echo "File sd-blob.img is valid";
-    elif [ -f ~/jetson-files/jp511-orin-nano-sd-card-image.zip ]; then
-      echo "Validating file jp511-orin-nano-sd-card-image.zip, this will take some time";
-      mdzip=$(awk '{print $1}' <<< $(md5sum ~/jetson-files/jp511-orin-nano-sd-card-image.zip));
-      if [ $mdzip = "50d923dd37b30d7d8d7c208cca6658ea" ]; then
-        echo "File jp511-orin-nano-sd-card-image.zip is valid";
-        unzip -p ~/jetson-files/jp511-orin-nano-sd-card-image.zip | pv -n -s 21g > ~/jetson-files/sd-blob.img 2> >(zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Extracting sd-card image from .zip file " --title="Jetson Orin Nano Developer Kit SD Card image (Unzipping)");
+    elif [ -f ~/jetson-files/jp512-orin-nano-sd-card-image.zip ]; then
+      echo "Validating file jp512-orin-nano-sd-card-image.zip, this will take some time";
+      mdzip=$(awk '{print $1}' <<< $(md5sum ~/jetson-files/jp512-orin-nano-sd-card-image.zip));
+      if [ $mdzip = "c00623b88952ebf49a19007a95eec90c" ]; then
+        echo "File jp512-orin-nano-sd-card-image.zip is valid";
+        unzip -p ~/jetson-files/jp512-orin-nano-sd-card-image.zip | pv -n -s 21g > ~/jetson-files/sd-blob.img 2> >(zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Extracting sd-card image from .zip file " --title="Jetson Orin Nano Developer Kit SD Card image (Unzipping)");
       else
-        echo "File jp511-orin-nano-sd-card-image.zip is invalid; Exiting script";
+        echo "File jp512-orin-nano-sd-card-image.zip is invalid; Exiting script";
         exit 1;
       fi;
     fi;
-  elif [ -f ~/jetson-files/jp511-orin-nano-sd-card-image.zip ]; then
-    echo "Validating file jp511-orin-nano-sd-card-image.zip, this will take some time";
-    mdzip=$(awk '{print $1}' <<< $(md5sum ~/jetson-files/jp511-orin-nano-sd-card-image.zip));
-    if [ $mdzip = "50d923dd37b30d7d8d7c208cca6658ea" ]; then
-      echo "File jp511-orin-nano-sd-card-image.zip is valid";
-      unzip -p ~/jetson-files/jp511-orin-nano-sd-card-image.zip | pv -n -s 21g > ~/jetson-files/sd-blob.img 2> >(zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Extracting sd-card image from .zip file " --title="Jetson Orin Nano Developer Kit SD Card image (Unzipping)");
+  elif [ -f ~/jetson-files/jp512-orin-nano-sd-card-image.zip ]; then
+    echo "Validating file jp512-orin-nano-sd-card-image.zip, this will take some time";
+    mdzip=$(awk '{print $1}' <<< $(md5sum ~/jetson-files/jp512-orin-nano-sd-card-image.zip));
+    if [ $mdzip = "c00623b88952ebf49a19007a95eec90c" ]; then
+      echo "File jp512-orin-nano-sd-card-image.zip is valid";
+      unzip -p ~/jetson-files/jp512-orin-nano-sd-card-image.zip | pv -n -s 21g > ~/jetson-files/sd-blob.img 2> >(zenity --progress --auto-close --auto-kill --percentage=0 --time-remaining --width=600 --text="Extracting sd-card image from .zip file " --title="Jetson Orin Nano Developer Kit SD Card image (Unzipping)");
     else
-      echo "File jp511-orin-nano-sd-card-image.zip is invalid; Exiting script";
+      echo "File jp512-orin-nano-sd-card-image.zip is invalid; Exiting script";
       exit 1;
     fi;
   else
@@ -142,7 +145,7 @@ sudo mkdir /media/jetpack/flash/home/jetpack;
 
 #Copy scripts and install files to the home directory
 sudo cp ./install-jetpack.sh /media/jetpack/flash/home/jetpack;
-sudo cp ~/jetson-files/deepstream-6.2_6.2.0-1_arm64.deb /media/jetpack/flash/home/jetpack;
+sudo cp ~/jetson-files/deepstream-6.3_6.3.0-1_arm64.deb /media/jetpack/flash/home/jetpack;
 #Copy desktop icon to /etc/skel/Desktop, this will be made available for all users. 
 sudo cp ./install-jetpack.desktop /media/jetpack/flash/etc/skel/Desktop;
 
@@ -175,4 +178,3 @@ fi
 
 zenity --info --title="All done!" \
 --text="We are done here, if you flashed NVMe, reboot your Jetson Orin Nano board and remove the SDcard prior to booting" --ellipsize
-
