@@ -30,7 +30,7 @@ sudo apt install --yes --assume-yes \
 #Below is a placeholder for Docker.sock permission issue
 #{docker-sock}sudo chmod 666 /var/run/docker.sock;
 
-#librdkafka installation is for DeepStream 6.2 installation.
+#librdkafka installation is for DeepStream 6.3 installation.
 #ref: https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_Quickstart.html#install-librdkafka-to-enable-kafka-protocol-adaptor-for-message-broker
 #Kafka installation begins
 mkdir /home/jetpack/kafka;
@@ -47,8 +47,8 @@ make;
 sudo make install;
 
 #Copy the generated libraries to the deepstream directory:
-sudo mkdir -p /opt/nvidia/deepstream/deepstream-6.2/lib;
-sudo cp /usr/local/lib/librdkafka* /opt/nvidia/deepstream/deepstream-6.2/lib;
+sudo mkdir -p /opt/nvidia/deepstream/deepstream-6.3/lib;
+sudo cp /usr/local/lib/librdkafka* /opt/nvidia/deepstream/deepstream-6.3/lib;
 #Kafka installation ends
 
 #reinstall NVIDIA BSP Packages
@@ -63,8 +63,8 @@ sudo apt install --reinstall --yes --assume-yes \
   nvidia-l4t-vulkan-sc-sdk nvidia-l4t-vulkan-sc nvidia-l4t-wayland nvidia-l4t-weston nvidia-l4t-x11 \
   nvidia-l4t-xusb-firmware nvidia-jetpack;
 
-if [ -f /home/jetpack/deepstream-6.2_6.2.0-1_arm64.deb ]; then
- sudo apt-get install /home/jetpack/deepstream-6.2_6.2.0-1_arm64.deb;
+if [ -f /home/jetpack/deepstream-6.3_6.3.0-1_arm64.deb ]; then
+ sudo apt-get install /home/jetpack/deepstream-6.3_6.3.0-1_arm64.deb;
 fi
 
 sudo rm -rf /home/jetpack;
