@@ -21,7 +21,7 @@ sudo apt install --yes --assume-yes \
  gstreamer1.0-plugins-ugly gstreamer1.0-libav libgstreamer-plugins-base1.0-dev \
  libgstrtspserver-1.0-0 libjansson4 libyaml-cpp-dev libgstreamer1.0-0 \
  python3-dev python3-pip python3-venv \
- libfreetype6-dev libssl-dev liblz4-dev libsasl2-dev;
+ libfreetype6-dev libssl-dev liblz4-dev libsasl2-dev zram-config;
 
 #Below is a placeholder if the user opts to remove sudo from asking password (only in terminal)
 #{remove-sudo-password}echo " 
@@ -72,6 +72,8 @@ sudo rm -f /etc/skel/Desktop/install-jetpack.desktop;
 sudo rm -f /home/${USER}/Desktop/install-jetpack.desktop;
 
 sudo apt full-upgrade --yes --assume-yes;
+
+sudo sed -i 's|totalmem / 2|totalmem * 2|g' /usr/bin/init-zram-swapping
 
 sudo reboot;
 
